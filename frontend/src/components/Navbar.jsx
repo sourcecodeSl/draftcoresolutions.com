@@ -8,7 +8,7 @@ import MagneticButton from './MagneticButton.jsx'
 import ServiceDrawing from './ServiceDrawings.jsx'
 import { nav, site } from '../data/site.js'
 import { services } from '../data/services.js'
-import { lockScroll } from '../lib/smoothScroll.js'
+import { lockScroll, scrollToTopSmooth } from '../lib/smoothScroll.js'
 
 const EASE = [0.76, 0, 0.24, 1]
 
@@ -94,7 +94,7 @@ function MegaMenu({ onNavigate }) {
   )
 }
 
-function MobileMenu({ onClose }) {
+function MobileMenu({ onNavigate }) {
   const origin = 'calc(100% - 44px) 40px'
   return (
     <motion.div
@@ -119,7 +119,7 @@ function MobileMenu({ onClose }) {
                 <NavLink
                   to={item.to}
                   end={item.to === '/'}
-                  onClick={onClose}
+                  onClick={() => onNavigate(item.to)}
                   className={({ isActive }) =>
                     `flex items-baseline gap-4 py-4 font-display text-[2.1rem] font-medium leading-none ${isActive ? 'text-ink' : 'text-muted'}`
                   }
@@ -144,7 +144,7 @@ function MobileMenu({ onClose }) {
           transition={{ delay: 0.5 }}
         >
           {services.map((s) => (
-            <Link key={s.slug} to={`/services/${s.slug}`} onClick={onClose} className="flex items-center gap-2 rounded-xl border border-line/10 px-3 py-2.5 text-xs text-body">
+            <Link key={s.slug} to={`/services/${s.slug}`} onClick={() => onNavigate(`/services/${s.slug}`)} className="flex items-center gap-2 rounded-xl border border-line/10 px-3 py-2.5 text-xs text-body">
               <s.icon className="h-4 w-4 text-accent" /> {s.short}
             </Link>
           ))}
@@ -156,7 +156,7 @@ function MobileMenu({ onClose }) {
           exit={{ opacity: 0 }}
           transition={{ delay: 0.55, duration: 0.5 }}
         >
-          <MagneticButton to="/contact" size="lg" block className="w-full" onClick={onClose}>
+          <MagneticButton to="/contact" size="lg" block className="w-full" onClick={() => onNavigate('/contact')}>
             Discuss Your Project <ArrowUpRight className="h-4 w-4" />
           </MagneticButton>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-[11px] text-muted">
@@ -231,9 +231,24 @@ export default function Navbar() {
 
   const pill = scrolled && !open
 
+  // A link to the page you're already on has nothing to navigate to, so glide back to the top instead.
+  // Deferred a tick so a closing mobile menu has released the scroll lock first.
+  const toTopIfCurrent = (to) => {
+    if (to === location.pathname) setTimeout(scrollToTopSmooth, 0)
+  }
+
   return (
     <>
-    <AnimatePresence>{open && <MobileMenu onClose={() => setOpen(false)} />}</AnimatePresence>
+    <AnimatePresence>
+      {open && (
+        <MobileMenu
+          onNavigate={(to) => {
+            setOpen(false)
+            toTopIfCurrent(to)
+          }}
+        />
+      )}
+    </AnimatePresence>
     <motion.header
       className="fixed inset-x-0 top-0 z-50 px-3 sm:px-4"
       animate={{ y: hidden && !open && !dropdown ? '-120%' : '0%' }}
@@ -247,7 +262,7 @@ export default function Navbar() {
         }`}
       >
         <motion.div initial="rest" animate="rest" whileHover="hover" className="relative z-10">
-          <Link to="/" aria-label="DraftCore Solutions — home">
+          <Link to="/" aria-label="DraftCore Solutions — home" onClick={() => toTopIfCurrent('/')}>
             <Logo interactive compact={pill} />
           </Link>
         </motion.div>
@@ -309,7 +324,14 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
             ) : (
-              <NavLink key={item.to} to={item.to} end={item.to === '/'} className={cls} onMouseEnter={() => setHovered(item.to)}>
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={cls}
+                onMouseEnter={() => setHovered(item.to)}
+                onClick={() => toTopIfCurrent(item.to)}
+              >
                 {({ isActive }) => inner(isActive)}
               </NavLink>
             )
@@ -317,7 +339,7 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden lg:block">
-          <MagneticButton to="/contact" size="sm">
+          <MagneticButton to="/contact" size="sm" onClick={() => toTopIfCurrent('/contact')}>
             Discuss Your Project <ArrowUpRight className="h-4 w-4" />
           </MagneticButton>
         </div>
