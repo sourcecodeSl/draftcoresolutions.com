@@ -29,15 +29,11 @@ function MenuToggle({ open, onClick }) {
 }
 
 // Services mega menu: list on the left, the hovered service's sheet drafts itself on the right.
-function MegaMenu() {
+function MegaMenu({ onNavigate }) {
   const [preview, setPreview] = useState(0)
   const s = services[preview]
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 8, scale: 0.98, transition: { duration: 0.15 } }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+    <div
       className="grid w-[820px] grid-cols-[1fr_1.05fr] gap-3 rounded-3xl border border-line/10 bg-surface p-3 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)]"
     >
       <ul className="py-1">
@@ -45,6 +41,7 @@ function MegaMenu() {
           <li key={item.slug}>
             <Link
               to={`/services/${item.slug}`}
+              onClick={onNavigate}
               onMouseEnter={() => setPreview(i)}
               onFocus={() => setPreview(i)}
               className="relative flex items-center gap-4 rounded-2xl px-4 py-3"
@@ -69,8 +66,13 @@ function MegaMenu() {
             </Link>
           </li>
         ))}
+        <li className="mt-1 border-t border-line/10 px-4 pt-3">
+          <Link to="/services" onClick={onNavigate} className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent hover:underline">
+            All services <ArrowUpRight className="h-3 w-3" />
+          </Link>
+        </li>
       </ul>
-      <Link to={`/services/${s.slug}`} className="relative flex flex-col overflow-hidden rounded-2xl border border-line/10 bg-canvas">
+      <Link to={`/services/${s.slug}`} onClick={onNavigate} className="relative flex flex-col overflow-hidden rounded-2xl border border-line/10 bg-canvas">
         <div className="bg-blueprint absolute inset-0 opacity-80" aria-hidden="true" />
         <div className="relative flex-1 p-6 text-accent">
           <AnimatePresence mode="wait">
@@ -88,7 +90,7 @@ function MegaMenu() {
           </span>
         </div>
       </Link>
-    </motion.div>
+    </div>
   )
 }
 
@@ -178,29 +180,19 @@ export default function Navbar() {
   const [dropdown, setDropdown] = useState(false)
   const [hovered, setHovered] = useState(null)
   const lastY = useRef(0)
-  const menuOpen = useRef(false)
-  const menuTimer = useRef(0)
-
-  // Services mega menu: opens only after resting on the Services link (hover intent), stays open while
-  // the pointer is on the link or the open menu, and a closing menu can never re-open itself.
-  const setMenu = (v) => {
-    clearTimeout(menuTimer.current)
-    menuOpen.current = v
-    setDropdown(v)
-  }
-  const openMenu = (delay = 140) => {
-    clearTimeout(menuTimer.current)
-    menuTimer.current = setTimeout(() => setMenu(true), delay)
-  }
-  const closeMenu = (delay = 180) => {
-    clearTimeout(menuTimer.current)
-    menuTimer.current = setTimeout(() => setMenu(false), delay)
-  }
-  const keepMenu = () => {
-    if (menuOpen.current) clearTimeout(menuTimer.current)
-  }
-  useEffect(() => () => clearTimeout(menuTimer.current), [])
+  const menuWrap = useRef(null)
+  const setMenu = setDropdown
   const location = useLocation()
+
+  // Services mega menu opens only on click of the Services toggle; a click anywhere else closes it.
+  useEffect(() => {
+    if (!dropdown) return undefined
+    const onDown = (e) => {
+      if (!menuWrap.current?.contains(e.target)) setMenu(false)
+    }
+    document.addEventListener('pointerdown', onDown)
+    return () => document.removeEventListener('pointerdown', onDown)
+  }, [dropdown])
 
   // morph to a floating pill once scrolled; tuck away while scrolling down, return on scroll up
   useEffect(() => {
@@ -266,7 +258,7 @@ export default function Navbar() {
               <motion.span layoutId="nav-hover" className="absolute inset-0 rounded-full bg-line/[0.08]" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />
             )
             const cls = ({ isActive }) =>
-              `group relative flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-medium tracking-wide transition-colors ${
+              `group relative flex items-center gap-1 rounded-full px-3 py-2 text-[13px] xl:px-4 font-medium tracking-wide transition-colors ${
                 isActive ? 'text-ink' : 'text-muted hover:text-ink'
               }`
             const inner = (isActive, extra) => (
@@ -284,30 +276,35 @@ export default function Navbar() {
             return item.dropdown ? (
               <div
                 key={item.to}
+                ref={menuWrap}
                 className="relative"
-                onFocus={() => openMenu(0)}
                 onBlur={(e) => {
                   if (!e.currentTarget.contains(e.relatedTarget)) setMenu(false)
                 }}
               >
-                <NavLink
-                  to={item.to}
-                  className={cls}
+                <button
+                  type="button"
+                  className={cls({ isActive: location.pathname.startsWith(item.to) })}
                   aria-haspopup="true"
                   aria-expanded={dropdown}
-                  onMouseEnter={() => {
-                    setHovered(item.to)
-                    openMenu()
-                  }}
-                  onMouseLeave={() => closeMenu()}
+                  onClick={() => setMenu((v) => !v)}
+                  onMouseEnter={() => setHovered(item.to)}
                 >
-                  {({ isActive }) => inner(isActive, <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${dropdown ? 'rotate-180' : ''}`} />)}
-                </NavLink>
-                <AnimatePresence>
+                  {inner(location.pathname.startsWith(item.to), <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${dropdown ? 'rotate-180' : ''}`} />)}
+                </button>
+                {/* keyed by route: a menu still exiting when the page changes is dropped instead of lingering invisibly */}
+                <AnimatePresence key={location.pathname}>
                   {dropdown && (
-                    <div className="absolute left-1/2 top-full -translate-x-1/2 pt-4" onMouseEnter={keepMenu} onMouseLeave={() => closeMenu()}>
-                      <MegaMenu />
-                    </div>
+                    <motion.div
+                      key="mega-menu"
+                      className="absolute left-1/2 top-full -translate-x-1/2 pt-4"
+                      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.98, pointerEvents: 'none', transition: { duration: 0.15 } }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                    >
+                      <MegaMenu onNavigate={() => setMenu(false)} />
+                    </motion.div>
                   )}
                 </AnimatePresence>
               </div>

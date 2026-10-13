@@ -2,6 +2,7 @@ import Hero from '../components/hero/Hero.jsx'
 import CapabilityTicker from '../components/sections/CapabilityTicker.jsx'
 import Intro from '../components/sections/Intro.jsx'
 import ServiceExplorer from '../components/sections/ServiceExplorer.jsx'
+import WorksPreview from '../components/sections/WorksPreview.jsx'
 import StageTimeline from '../components/sections/StageTimeline.jsx'
 import WhyGrid from '../components/sections/WhyGrid.jsx'
 import Showcase from '../components/sections/Showcase.jsx'
@@ -17,9 +18,10 @@ export default function Home() {
       <CapabilityTicker />
       <Intro />
       <ServiceExplorer index="01" />
-      <StageTimeline index="02" />
-      <WhyGrid index="03" />
-      <Showcase index="04" />
+      <WorksPreview index="02" />
+      <StageTimeline index="03" />
+      <WhyGrid index="04" />
+      <Showcase index="05" />
       <Audiences />
       <CTASection />
     </>

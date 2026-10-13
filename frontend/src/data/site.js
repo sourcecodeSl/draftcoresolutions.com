@@ -36,6 +36,7 @@ export const nav = [
   { label: 'Home', to: '/' },
   { label: 'About', to: '/about' },
   { label: 'Services', to: '/services', dropdown: true },
+  { label: 'Our Works', to: '/works' },
   { label: 'Projects', to: '/projects' },
   { label: 'Why DraftCore', to: '/why-draftcore' },
   { label: 'Contact', to: '/contact' },

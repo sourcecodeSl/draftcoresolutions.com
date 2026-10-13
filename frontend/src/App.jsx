@@ -15,6 +15,7 @@ import Home from './pages/Home.jsx'
 const About = lazy(() => import('./pages/About.jsx'))
 const Services = lazy(() => import('./pages/Services.jsx'))
 const ServiceDetail = lazy(() => import('./pages/ServiceDetail.jsx'))
+const Works = lazy(() => import('./pages/Works.jsx'))
 const Projects = lazy(() => import('./pages/Projects.jsx'))
 const WhyDraftCore = lazy(() => import('./pages/WhyDraftCore.jsx'))
 const Contact = lazy(() => import('./pages/Contact.jsx'))
@@ -69,6 +70,7 @@ export default function App() {
               <Route path="/about" element={<About />} />
               <Route path="/services" element={<Services />} />
               <Route path="/services/:slug" element={<ServiceDetail />} />
+              <Route path="/works" element={<Works />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/why-draftcore" element={<WhyDraftCore />} />
               <Route path="/contact" element={<Contact />} />
