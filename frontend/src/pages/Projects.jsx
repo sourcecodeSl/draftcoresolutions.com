@@ -16,7 +16,7 @@ const ProjectCard = forwardRef(function ProjectCard({ project }, ref) {
   return (
     <motion.article
       ref={ref}
-      data-cursor="CAD view"
+      data-cursor={project.image ? undefined : 'CAD view'}
       layout
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -25,10 +25,22 @@ const ProjectCard = forwardRef(function ProjectCard({ project }, ref) {
       className="group overflow-hidden rounded-2xl border border-line/10 bg-surface shadow-[0_20px_50px_-35px_rgba(15,32,60,0.35)] transition-[border-color,box-shadow] duration-500 hover:border-accent/40 hover:shadow-[0_30px_60px_-30px_rgba(0,108,186,0.45)]"
     >
       <div className="relative aspect-[8/5] overflow-hidden">
-        <InteriorDrawing scene={project.scene} mode="render" className="absolute inset-0 h-full w-full transition-transform duration-700 group-hover:scale-105" />
-        <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-          <InteriorDrawing scene={project.scene} mode="wire" className="absolute inset-0 h-full w-full" />
-        </div>
+        {project.image ? (
+          <img
+            src={project.image}
+            alt={project.title}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <>
+            <InteriorDrawing scene={project.scene} mode="render" className="absolute inset-0 h-full w-full transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+              <InteriorDrawing scene={project.scene} mode="wire" className="absolute inset-0 h-full w-full" />
+            </div>
+          </>
+        )}
         <span className="absolute left-3 top-3 rounded-full bg-canvas/80 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-accent backdrop-blur">
           {project.category}
         </span>
@@ -38,7 +50,6 @@ const ProjectCard = forwardRef(function ProjectCard({ project }, ref) {
       </div>
       <div className="p-6">
         <h3 className="font-display text-xl font-semibold text-ink">{project.title}</h3>
-        <p className="mt-1 text-sm text-faint">Location to be confirmed</p>
         <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-line/10 pt-5 text-sm">
           <div>
             <dt className="font-mono text-[10px] uppercase tracking-wider text-faint">Services</dt>

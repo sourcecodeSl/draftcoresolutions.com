@@ -21,6 +21,7 @@ export const services = [
       'Revit ID and Architecture models developed up to LOD 350, with full documentation issued across CD, SD, DD, Tender and IFC stages.',
     icon: Boxes,
     cta: 'Request BIM Support',
+    heroImage: { src: '/media/heroes/bim-lod-levels.jpg', alt: 'BIM level of development from LOD 100 to LOD 500' },
     tags: ['Revit', 'LOD 350', 'CD', 'SD', 'DD', 'Tender', 'IFC'],
     showStages: true,
     items: [

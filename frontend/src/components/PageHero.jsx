@@ -28,7 +28,25 @@ function DraftLines() {
   )
 }
 
-export default function PageHero({ eyebrow, title, text, crumbs = [], highlight, children }) {
+// Framed hero image in the right column, with blueprint corner ticks to match the drawing-board look.
+function HeroImage({ src, alt }) {
+  const tick = 'absolute h-5 w-5 border-accent/60'
+  return (
+    <Reveal delay={0.25} className="relative mt-12 lg:col-span-5 lg:mt-0">
+      <div className="relative overflow-hidden rounded-2xl border border-line/10 bg-surface shadow-[0_30px_80px_-40px_rgba(0,108,186,0.6)]">
+        <img src={src} alt={alt} decoding="async" fetchpriority="high" className="block h-auto w-full" />
+      </div>
+      <span aria-hidden="true">
+        <span className={`${tick} -left-2 -top-2 border-l border-t`} />
+        <span className={`${tick} -right-2 -top-2 border-r border-t`} />
+        <span className={`${tick} -bottom-2 -left-2 border-b border-l`} />
+        <span className={`${tick} -bottom-2 -right-2 border-b border-r`} />
+      </span>
+    </Reveal>
+  )
+}
+
+export default function PageHero({ eyebrow, title, text, crumbs = [], highlight, image, children }) {
   return (
     <section className="relative overflow-hidden pb-16 pt-32 lg:pb-24 lg:pt-44">
       <div className="bg-blueprint mask-radial-top absolute inset-0" aria-hidden="true" />
@@ -36,40 +54,45 @@ export default function PageHero({ eyebrow, title, text, crumbs = [], highlight,
         className="pointer-events-none absolute -top-40 right-[-10%] h-[520px] w-[520px] rounded-full bg-brand-electric/20 blur-[130px]"
         aria-hidden="true"
       />
-      <DraftLines />
-      <div className="container-x relative">
-        <Reveal>
-          <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
-            <Link to="/" className="hover:text-accent">
-              Home
-            </Link>
-            {crumbs.map((c) => (
-              <span key={c.label} className="flex items-center gap-2">
-                <ChevronRight className="h-3 w-3" />
-                {c.to ? (
-                  <Link to={c.to} className="hover:text-accent">
-                    {c.label}
-                  </Link>
-                ) : (
-                  <span className="text-body">{c.label}</span>
-                )}
-              </span>
-            ))}
-          </nav>
-          <p className="eyebrow">{eyebrow}</p>
-        </Reveal>
-        <RevealText
-          as="h1"
-          text={title}
-          highlight={highlight}
-          className="mt-5 max-w-4xl font-display text-4xl font-semibold leading-[1.04] tracking-tight text-ink sm:text-5xl lg:text-7xl"
-        />
-        {text && (
-          <Reveal delay={0.2}>
-            <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted">{text}</p>
+      {!image && <DraftLines />}
+      <div className={`container-x relative ${image ? 'lg:grid lg:grid-cols-12 lg:items-center lg:gap-12' : ''}`}>
+        <div className={image ? 'lg:col-span-7' : undefined}>
+          <Reveal>
+            <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
+              <Link to="/" className="hover:text-accent">
+                Home
+              </Link>
+              {crumbs.map((c) => (
+                <span key={c.label} className="flex items-center gap-2">
+                  <ChevronRight className="h-3 w-3" />
+                  {c.to ? (
+                    <Link to={c.to} className="hover:text-accent">
+                      {c.label}
+                    </Link>
+                  ) : (
+                    <span className="text-body">{c.label}</span>
+                  )}
+                </span>
+              ))}
+            </nav>
+            <p className="eyebrow">{eyebrow}</p>
           </Reveal>
-        )}
-        {children}
+          <RevealText
+            as="h1"
+            text={title}
+            highlight={highlight}
+            className={`mt-5 max-w-4xl font-display text-4xl font-semibold leading-[1.04] tracking-tight text-ink sm:text-5xl ${
+              image ? 'lg:text-6xl' : 'lg:text-7xl'
+            }`}
+          />
+          {text && (
+            <Reveal delay={0.2}>
+              <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted">{text}</p>
+            </Reveal>
+          )}
+          {children}
+        </div>
+        {image && <HeroImage {...image} />}
       </div>
     </section>
   )

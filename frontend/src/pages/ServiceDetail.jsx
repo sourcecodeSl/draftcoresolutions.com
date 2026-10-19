@@ -51,6 +51,7 @@ export default function ServiceDetail() {
         eyebrow={`Service ${service.number}`}
         title={service.title}
         text={service.intro}
+        image={service.heroImage}
       >
         <Reveal delay={0.3} className="mt-10 flex flex-wrap gap-4">
           <MagneticButton to={enquiry} size="lg">

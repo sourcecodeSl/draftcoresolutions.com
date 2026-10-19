@@ -146,6 +146,7 @@ export default function Works() {
         title="Drawn to be built, detail by detail."
         highlight={[4, 5, 6]}
         text="Shop drawings, joinery details and interior documentation issued by DraftCore. Open any sheet to see it full size and zoom into the detail."
+        image={{ src: '/media/heroes/works-house.jpg', alt: 'House model rising from its working drawings' }}
       >
         <Reveal delay={0.3}>
           <dl className="mt-10 flex flex-wrap gap-x-10 gap-y-4 font-mono text-xs uppercase tracking-[0.18em]">

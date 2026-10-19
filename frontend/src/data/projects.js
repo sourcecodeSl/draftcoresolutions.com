@@ -1,11 +1,10 @@
-// PLACEHOLDER CONTENT — the capability statement contains no case studies.
-// Replace these entries with approved DraftCore projects (name, location, client if permitted,
-// images) before launch. `scene` picks one of the built-in drawing illustrations until real
-// imagery is supplied; add an `image` field and render it in ProjectCard when available.
+// PLACEHOLDER CONTENT — swap in approved DraftCore projects (name, client if permitted) before launch.
+// `image` is the card photo; `scene` is the built-in drawing illustration used when no image is set.
 export const projects = [
   {
     id: 'sample-1',
     title: 'Hotel Lobby & Lounge',
+    image: '/media/projects/hotel-lobby.jpg',
     category: 'Hospitality',
     services: ['BIM Modelling', 'Shop Drawings'],
     stage: 'IFC',
@@ -15,6 +14,7 @@ export const projects = [
   {
     id: 'sample-2',
     title: 'Residential Kitchen Joinery',
+    image: '/media/projects/kitchen-joinery.jpg',
     category: 'Joinery',
     services: ['Shop Drawings'],
     stage: 'Fabrication',
@@ -24,6 +24,7 @@ export const projects = [
   {
     id: 'sample-3',
     title: 'Boutique Retail Fit-Out',
+    image: '/media/projects/boutique-retail.jpg',
     category: 'Retail',
     services: ['CAD Documentation', 'Project Delivery'],
     stage: 'Tender',
@@ -32,7 +33,8 @@ export const projects = [
   },
   {
     id: 'sample-4',
-    title: 'Private Residence Interiors',
+    title: 'Hotel Room',
+    image: '/media/projects/hotel-room.jpg',
     category: 'Residential',
     services: ['Interior Design', 'FF&E Solutions'],
     stage: 'DD',
@@ -41,7 +43,8 @@ export const projects = [
   },
   {
     id: 'sample-5',
-    title: 'Café & Dining Counter',
+    title: 'F&B Outlet',
+    image: '/media/projects/fnb-outlet.jpg',
     category: 'F&B',
     services: ['Interior Design', 'Shop Drawings'],
     stage: 'IFC',
@@ -50,7 +53,8 @@ export const projects = [
   },
   {
     id: 'sample-6',
-    title: 'Corporate Office Pantry',
+    title: 'Corporate Office',
+    image: '/media/projects/corporate-office.jpg',
     category: 'Commercial',
     services: ['BIM Modelling', 'CAD Documentation'],
     stage: 'SD',
@@ -59,7 +63,8 @@ export const projects = [
   },
   {
     id: 'sample-7',
-    title: 'Wall Panelling & Ceilings',
+    title: 'Luxury Fit-Out',
+    image: '/media/projects/luxury-fitout.jpg',
     category: 'Fit-Out',
     services: ['Shop Drawings', 'Project Delivery'],
     stage: 'Site',
